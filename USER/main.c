@@ -31,36 +31,64 @@ int main(void)
 	TIM16_PWM_Init(200-1,10000-1);//pump
 	HAL_GPIO_WritePin(GPIOB,GPIO_PIN_8,GPIO_PIN_SET);
 	MX_ADC1_Init();
+	TIM2_Init(10000-1,2000-1);
 	
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_12,GPIO_PIN_RESET);
-	StartAngleInit();
+	StartAngleInit1();
 	InitRobotPosion();
 	HAL_Delay(500);
+	StartAngleInit2();
 	SV_test1();
+	HAL_Delay(200);
 	SV_test2();
-		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);	//rf0和别的是反的		
-		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);	//rh0		
-//	reverse2(0,-10,0,20);
-	TIM5_Init(10000-1,200-1);
-//	TIM2_Init(10000-1,200-1);
+//	TIM5_Init(10000-1,200-1);
+//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
+//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
 	while(1)
-	 {
-//		Showadc1();		
-//		HAL_UART_Transmit(&huart7,&c,sizeof(c),1000);
+	{	
+
+////		HAL_UART_Transmit(&huart7,&c,sizeof(c),1000);
+//		TIM_SetCompare1(&TIM16_Handler,150);//1/8-1/125|5/200-25/200(1/40-1/8)
+////		HAL_Delay(1000);
+//		TIM_SetCompare1(&TIM1_Handler,450);//1/8-1/125|5/200-25/200(1/40-1/8)
+//		HAL_Delay(300);
 //		TIM_SetCompare1(&TIM1_Handler,750);//1/8-1/125|5/200-25/200(1/40-1/8)
-//		HAL_Delay(1000);
-//		TIM_SetCompare1(&TIM1_Handler,1150);//1/8-1/125|5/200-25/200(1/40-1/8)
-//		HAL_Delay(1000);
+//		HAL_Delay(150);
+//		 float t;
+//		 t=0;
+//		 while(t<100)
+//		 {
+//			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);	
+//			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
+//			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);	
+//			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_SET);			 
 //		 Read_All_Ad(); 
 //		 sv_flag[3]=1;
 //		 SV_ESTIMATE();
 //		 HAL_UART_Transmit(&huart7, &adc_1_H,sizeof(adc_1_H),0xFFFF);		
 //		 HAL_UART_Transmit(&huart7, &adc_1_L,sizeof(adc_1_H),0xFFFF);
 //		 HAL_UART_Transmit(&huart7, &len,1,0xFFFF);
-////		TIM_SetCompare1(&TIM16_Handler,10);
 //		HAL_Delay(20);
+//		 t+=1;
+//		 }
+//			 HAL_Delay(1000);
+//		 while(t>=100&&t<200)
+//		 {
+//			 HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);	
+//			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);
+//			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);	
+//			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);	
+//			 TIM_SetCompare1(&TIM16_Handler,199);
+//			HAL_Delay(20);
+//			t+=1;
+//		 }
+//		 	TIM_SetCompare2(&TIM1_Handler,620);
+//		 TIM_SetCompare1(&TIM1_Handler,750);
+//		 HAL_Delay(200);
+//				TIM_SetCompare1(&TIM1_Handler,1150);
+//				HAL_Delay(200); 		 
 //		TIM_SetCompare1(&TIM16_Handler,190);
-//		HAL_Delay(1000); 
+//		HAL_Delay(2000); 
 //		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);	//rf0和别的是反的
 //		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);	//rf1 
 //	  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);	//rh0
@@ -83,13 +111,6 @@ int main(void)
 //		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);	//PB0置0
 //		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);	//PB1置1 		 
 //		HAL_Delay(2000);
-//		Read_All_Ad();
-//		HAL_Delay(50);
-//    Robot_test3();
-//		HAL_Delay(10);
 //		TIM_SetCompare1(&TIM1_Handler,15);
-//		robotTripodGait(); // simple tripod gait, the trajectory is stright line
-	  }
 	}
-
-
+}

@@ -110,20 +110,23 @@ void TIM2_IRQHandler(void)
 
 //定时器5中断服务函数调用
 float s=-0.8;
-float T=4;
+float T=3;
 float delta_t=0.02;
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if(htim==(&TIM5_Handler))
     {
-			air_control();
-			movement();			
+			//Read_All_Ad();	
+			//air_control_trot();
+			//movement_trot();	
+			movement_tripod_br();				
 			s=s+delta_t;
 		}
 		if(htim==(&TIM2_Handler))
-    {						
-			
+    {			
+			Read_All_Ad();			
+			battery_indicatior();
 		}
 		if(htim==(&TIM7_Handler))
     {	

@@ -1,13 +1,15 @@
 #include "uart.h"
 #include "timer.h"
 #include "gait.h"
-
+#include "math.h"
+#include <stdlib.h> 
+# include <string.h>
+# include <stdio.h>
 #if SYSTEM_SUPPORT_OS
 #include "includes.h"					//os 使用	  
-#endif
+#endif	
 
-u8 onestep=0;
-
+int onestep=0;
 #if EN_UART7_RX   //如果使能了接收
 //串口1中断服务程序
 //注意,读取USARTx->SR能避免莫名其妙的错误   	
@@ -21,7 +23,7 @@ u8 res;
 u8 aRxBuffer[RXBUFFERSIZE];//HAL库使用的串口接收缓冲
 UART_HandleTypeDef huart7; //UART句柄
 u8 rdata[RDATASIZE];
-u8 receive[receivedata];
+char receive[receivedata];
 void MY_UART7_Init(void)
 {	
 	//UART 初始化设置
@@ -66,46 +68,63 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 	}
 }
 
+void split(char *src,const char *separator,char **dest,int *num) 
+{
+	/*
+		src ????????(buf???) 
+		separator ???????
+		dest ?????????
+		num ??????????
+	*/
+     char *pNext;
+     int count = 0;
+     if (src == NULL || strlen(src) == 0) 
+        return;
+     if (separator == NULL || strlen(separator) == 0) 
+        return;
+     pNext = (char *)strtok(src,separator); 
+     while(pNext != NULL) {
+          *dest++ = pNext;
+          ++count;
+         pNext = (char *)strtok(NULL,separator);  
+    }  
+    *num = count;
+}
 u8 res = 0;
+char *revbuf[8] = {0}; 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	u8 rec;
- 
+	u8 rec; 
+	u8 sb;
 	if(huart->Instance==UART7)//如果是串口1
 	{				
 		rec=*(huart->pRxBuffPtr-1);
-		
 		if(rec!=0x0D && rec!=0x0A)
 		{
 			HAL_UART_Transmit(&huart7,&rec,1,0xFFFF);
-			receive[res]=rec;
-			res++;
+			receive[res]=rec;			
+			res++;			
 		}
 		else if(rec==0x0D)
 		{
-			for(u8 count=0; count<sizeof(receive)-res; count++)
+		for(u8 count=0; count<receivedata-res; count++)
+			{
 			receive[res+count] = 'b';			
+			sb =	res+count;						
+			}
+		}	
+		if(sb==19)
+		{			
+			int i;
+			int num = 0;
+			split(receive,",",revbuf,&num);
+			onestep=atoi(revbuf[0]);
+							
+		//lr_output_message("%s\n",revbuf[i]);
+		//HAL_UART_Transmit(&huart7,(revbuf[i]),sizeof(revbuf[i]),1000);
 			res=0;				
-		}
-	}
-		
-	take_step();		
-				
-//			onestep=(receive[0]-48)*10*(taking-1)+receive[1]*10*(taking-1)-48;
-				
-}	
-
-void take_step(void)
-{	
-	u8 taking=receivedata-1;
-		while(receive[taking]=='b')
-		{
-		taking--;		
-		}
-		for(u8 minus=0; minus<taking;minus++)
-			{	
-			onestep=(receive[minus]-48)*10^(taking-minus-1)+onestep;
-			}			
+		}											
+	}	
 }	
 
 
@@ -115,6 +134,7 @@ void UART7_IRQHandler(void)
   	HAL_UART_Receive_IT(&huart7,(u8 *)rdata, RDATASIZE);
 }	
 #endif
+
 //void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //{
 //	if(huart->Instance==UART7)//如果是串口1
@@ -156,3 +176,38 @@ void UART7_IRQHandler(void)
 
 //	}
 //} 
+
+//			return 0;
+
+//			u8 callback=0; 
+//			u8 callback1=0;			
+//				while(receive[callback]!=0x2c&&receive[callback]!='b')
+//				{
+//					out_put_1[callback1]=receive[callback];
+//					callback1++;
+//					callback++;			
+//				}
+//				if(receive[callback]==0x2c)
+//				{
+//					callback++;
+//					u8 callback2=0;
+//					while(receive[callback]!=0x2c&&receive[callback]!='b')
+//					{
+//						out_put_2[callback2]=receive[callback];
+//						callback2++;
+//						callback++;			
+//					}
+//					if(receive[callback]==0x2c)
+//					{
+//						callback++;
+//						u8 callback3=0;
+//						while(receive[callback]!=0x2c&&receive[callback]!='b')
+//						{
+//							out_put_3[callback3]=receive[callback];
+//							callback3++;
+//							callback++;					
+//						}					
+//							
+//				}		
+//			}
+//	

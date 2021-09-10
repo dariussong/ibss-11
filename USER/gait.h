@@ -1,8 +1,6 @@
 #ifndef __MOTION_H__
 #define __MOTION_H__
-
 #include <sys.h>
-
 #include <timer.h>
 
 #define JonintNum 12
@@ -33,6 +31,7 @@
 extern float L_onestep;
 extern float W_onestep;
 extern float D_onestep;
+extern float H_onestep;
 extern const short L1;
 extern const short L2;
 extern const short L3;
@@ -41,26 +40,22 @@ extern float B;
 extern float F1;
 extern float F2;
 extern float F3;
-
+extern float stime;
+extern float Time;
 extern float cx[4];
 extern float cy[4];
 extern float cz[4];
-void StartAngleInit(void);                              
+void StartAngleInit1(void);
+void StartAngleInit2(void);
+void StartAngleInit3(void);
+void StartAngleInit4(void);
+void StartAngleInit5(void);
 void InitRobotPosion(void);                                
 void Angle(float,int8_t);//output angle
-void setcurrentposition (int,float,float,float);
-
-
-void Robot_test1(void);
-void Robot_test2(void);
-void Robot_test3(void);
-void robotTripodGait();
-void inverse(void);
-
-
-
-void Switch(void);
-void movement(void);
+void movement_trot(void);
+void movement_tripod(void);
+void movement_tripod_br(void);
+void movement_series(void);
 
 typedef struct Kinematics
 {	

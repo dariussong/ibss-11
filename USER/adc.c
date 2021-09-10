@@ -8,6 +8,7 @@ uint16_t adc1;
 uint16_t adc2;
 uint16_t adc3;
 uint16_t adc4;
+uint16_t adc5;
 
 uint8_t adc_1_H;
 uint8_t adc_1_L;
@@ -17,6 +18,8 @@ uint8_t adc_3_H;
 uint8_t adc_3_L;
 uint8_t adc_4_H;
 uint8_t adc_4_L;
+uint8_t adc_5_H;
+uint8_t adc_5_L;
 uint8_t aa=1;
 
 char c[20]={0};
@@ -124,7 +127,7 @@ void Read_All_Ad()
 		adc2 = Get_Adc_Average(&ADC1_Handler,ADC_CHANNEL_17,AD_AVERAGE);
 		adc3 = Get_Adc_Average(&ADC1_Handler,ADC_CHANNEL_14,AD_AVERAGE);
 		adc4 = Get_Adc_Average(&ADC1_Handler,ADC_CHANNEL_15,AD_AVERAGE);
-
+		adc5 = Get_Adc_Average(&ADC1_Handler,ADC_CHANNEL_18,AD_AVERAGE);
 		adc_1_H = adc1>>8;
 		adc_1_L = adc1&0xff;
 		adc_2_H = adc2>>8;
@@ -133,7 +136,9 @@ void Read_All_Ad()
 		adc_3_L = adc3&0xff;
 		adc_4_H = adc4>>8;
 		adc_4_L = adc4&0xff;
-	}
+		adc_5_H = adc5>>8;
+		adc_5_L = adc5&0xff;	
+}
 
 void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
 {
@@ -147,49 +152,92 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     PA1     ------> ADC1_INP17
     PA2     ------> ADC1_INP14
     PA3     ------> ADC1_INP15
-
+		PA4     ------> ADC1_INP18
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
+    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
+		
   }
+			GPIO_InitTypeDef GPIO_Initure;
+    __HAL_RCC_GPIOD_CLK_ENABLE();					//开启GPIOB时钟
+	
+    GPIO_Initure.Pin=GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;			//PB0，1
+    GPIO_Initure.Mode=GPIO_MODE_OUTPUT_PP;  		//推挽输出
+    GPIO_Initure.Pull=GPIO_NOPULL;         			//上拉
+    GPIO_Initure.Speed=GPIO_SPEED_FREQ_HIGH;  	//高速
+    HAL_GPIO_Init(GPIOD,&GPIO_Initure);     		//初始化GPIOB.0和GPIOB.1
+
+    HAL_GPIO_WritePin(GPIOD,GPIO_PIN_0,GPIO_PIN_RESET);	//PB0置0
+		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_1,GPIO_PIN_RESET);	//PB1置1 
+	  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_2,GPIO_PIN_RESET);	//PB0置0
+		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_3,GPIO_PIN_RESET);	//PB1置1 
+
 }
-char* itoa(int num,char* str,int radix)
+float remain_v;
+void battery_indicatior(void)
 {
-	char index[]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	unsigned unum;
-	int i=0,j,k;
-	if(radix==10&&num<0)
-	{
-		unum=(unsigned)-num;
-		str[i++]='-';
-	}
-	else unum=(unsigned)num;
-	do
-	{
-		str[i++]=index[unum%(unsigned)radix];
-		unum/=radix;
-	}while(unum);
-	str[i]='\0';
 
-	if(str[0]=='-') k=1;
-	else k=0;
-	char temp;
-	for(j=k;j<=(i-1)/2;j++)
-	{
-		temp=str[j];
-		str[j]=str[i-1+k-j];
-		str[i-1+k-j]=temp;
+	if(adc5>7.5*65536/4/3.3)
+	{		
+		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_0,GPIO_PIN_RESET);	//PB0置0
+		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_1,GPIO_PIN_RESET);	//PB1置1 
+	  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_2,GPIO_PIN_RESET);	//PB0置0
+		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_3,GPIO_PIN_RESET);	//PB1置1 
 	}
-	return str;
-}
+	if(adc5<=7.2*65536/4/3.3)
+	{		
+		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_0,GPIO_PIN_SET);	//PB0置0
+		if(adc5<6.85*65536/4/3.3)
+		{				
+			HAL_GPIO_WritePin(GPIOD,GPIO_PIN_1,GPIO_PIN_SET);	//PB1置1 
 
-void Showadc1(void)
-{			
-	itoa(aa,c,10);
-	HAL_UART_Transmit(&huart7,(uint8_t*)c,sizeof(c),1000);
-//	HAL_UART_Transmit(&huart7,(uint8_t*)cc,sizeof(cc),1000);
-	memset(c,0,sizeof(c));
+			if(adc5<6.6*65536/4/3.3)
+			{					
+				HAL_GPIO_WritePin(GPIOD,GPIO_PIN_2,GPIO_PIN_SET);	//PB0置0
+				if(adc5<6.4*65536/4/3.3)
+				{				
+					HAL_GPIO_WritePin(GPIOD,GPIO_PIN_3,GPIO_PIN_SET);	//PB1置1 
+				}
+			}
+		}
+	}
 }
+//char* itoa(int num,char* str,int radix)
+//{
+//	char index[]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//	unsigned unum;
+//	int i=0,j,k;
+//	if(radix==10&&num<0)
+//	{
+//		unum=(unsigned)-num;
+//		str[i++]='-';
+//	}
+//	else unum=(unsigned)num;
+//	do
+//	{
+//		str[i++]=index[unum%(unsigned)radix];
+//		unum/=radix;
+//	}while(unum);
+//	str[i]='\0';
+
+//	if(str[0]=='-') k=1;
+//	else k=0;
+//	char temp;
+//	for(j=k;j<=(i-1)/2;j++)
+//	{
+//		temp=str[j];
+//		str[j]=str[i-1+k-j];
+//		str[i-1+k-j]=temp;
+//	}
+//	return str;
+//}
+
+//void Showadc1(void)
+//{			
+//	itoa(aa,c,10);
+//	HAL_UART_Transmit(&huart7,(uint8_t*)c,sizeof(c),1000);
+////	HAL_UART_Transmit(&huart7,(uint8_t*)cc,sizeof(cc),1000);
+//	memset(c,0,sizeof(c));
+//}

@@ -96,11 +96,11 @@ void pid_value_init(void)
 {
   Kp = 2;
   Ki = 0.2;
-  Kd = 1.2;
+  Kd = 2;
   err = 0;
 	err_last = 0;
 	integral = 0;
-	target_p = 30;
+	target_p = 50;
 }
 
 void SV_ESTIMATE(void)
@@ -110,10 +110,10 @@ void SV_ESTIMATE(void)
 		if(sv_flag[i]==1)
 		{
 			
-			P[3] = 50*(3.3*adc1/65536-2.5);
-			P[1] = 50*(3.3*adc2/65536-2.5);
-			P[0] = 50*(3.3*adc3/65536-2.5);
-			P[2] = 50*(3.3*adc4/65536-2.5);
+			P[3] = 80*(3.3*adc1/65536-1.45);
+			P[1] = 80*(3.3*adc2/65536-1.45);
+			P[0] = 80*(3.3*adc3/65536-1.45);
+			P[2] = 80*(3.3*adc4/65536-1.45);
 			actual_p = P[i];
 			
 			err = target_p - actual_p;
@@ -125,14 +125,14 @@ void SV_ESTIMATE(void)
 			p = Kp * err + Ki*integral + Kd*(err - err_last);
 			err_last = err;
 			actual_p = p + actual_p;
-			speed = 3*(actual_p-10);
+			speed = 1.5*actual_p-5;
 			TIM_SetCompare1(&TIM16_Handler,speed);
 			integral = 0;
 			break;
 		}
 	}
 }
-void air_control(void)//rf rh lf lh
+void air_control_trot(void)//rf rh lf lh
 {
 	if(s<-0.2)
 		{
@@ -209,4 +209,94 @@ void air_control(void)//rf rh lf lh
 }
 	
 
+void air_control_tripod(void)
+{
+	if(s<-0.2)
+		{
+			SV_ESTIMATE();
+			sv_flag[1]=1;
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);	//rf0和别的是反的		
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);	//rh0		
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4,GPIO_PIN_RESET);	//lf0		
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_RESET);	//lh0		
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);	//all0	
+		}
+	if(s>=-0.2&&s<0)
+	{
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);	//rf0和别的是反的		
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);	//rh0		
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4,GPIO_PIN_SET);	//lf0		
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);	//lh0		
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);	//all0				
+	}
+	if(s>-T/16&&s<=T/16)
+	{
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
+		sv_flag[2]=0;
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
+	}
+	if(s>T/16&&s<=3*T/32)
+	{
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
+	}
+	if(s>3*T/16&&s<=10*T/32)
+	{
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);
+		sv_flag[1]=1;
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
+	}
+	if(s>10*T/32&&s<=6*T/16)
+	{
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
+		sv_flag[1]=0;
+	}
+	if(s>7*T/16&&s<=17*T/32)
+	{
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);
+		sv_flag[3]=1;
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_5,GPIO_PIN_RESET);
+	}
+	if(s>17*T/32&&s<=9*T/16)
+	{
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_5,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
+	sv_flag[3]=0;
+	}
+	if(s>11*T/16&&s<=25*T/32)
+	{
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);
+		sv_flag[0]=1;
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_RESET);
+	}
+	if(s>25*T/32&&s<=13*T/16)
+	{
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
+			sv_flag[0]=0;
+	}
+	if(s>15*T/16&&s<=T)
+	{
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);
+		sv_flag[2]=1;
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
+	}
 
+}
