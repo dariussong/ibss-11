@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER, STM32H743xx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\USER;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HALLIB\STM32H7xx_HAL_Driver\Inc;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\WWDG;..\HARDWARE\TIMER</IncludePath>
+              <IncludePath>..\CORE;..\USER;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HALLIB\STM32H7xx_HAL_Driver\Inc;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\WWDG;..\HARDWARE\TIMER;D:\Software\Keil MDK\ARM\ARMCC\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

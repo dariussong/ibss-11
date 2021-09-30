@@ -1,5 +1,6 @@
 #include "uart.h"
 #include "timer.h"
+#include "adc.h"
 #include "gait.h"
 #include "math.h"
 #include <stdlib.h> 
@@ -10,6 +11,22 @@
 #endif	
 
 int onestep=0;
+
+uint8_t verify_temp[2]={0x55,0xAA};
+
+int	receiveSetP;
+int	receiveSetT;
+int	receiveSetG=2;
+int receiveSetL;
+int receiveSetH;
+int receiveSetW;
+int recMotion_flag=1;
+
+char *recstring0;
+char space='\040';
+char enter='\012';
+char flag_b='b';
+ 
 #if EN_UART7_RX   //如果使能了接收
 //串口1中断服务程序
 //注意,读取USARTx->SR能避免莫名其妙的错误   	
@@ -90,8 +107,37 @@ void split(char *src,const char *separator,char **dest,int *num)
     }  
     *num = count;
 }
+
+void sendP(void)
+{
+	
+	   //发送校验 0x55AA
+		 HAL_UART_Transmit(&huart7, &verify_temp[0],sizeof(adc_1_H),0xFFFF);
+		 HAL_UART_Transmit(&huart7, &verify_temp[1],sizeof(adc_1_H),0xFFFF);	   
+	
+		 HAL_UART_Transmit(&huart7, &adc_1_H,sizeof(adc_1_H),0xFFFF);
+		 HAL_UART_Transmit(&huart7, &adc_1_L,sizeof(adc_1_H),0xFFFF);
+	
+		 HAL_UART_Transmit(&huart7, &adc_2_H,sizeof(adc_1_H),0xFFFF);
+		 HAL_UART_Transmit(&huart7, &adc_2_L,sizeof(adc_1_H),0xFFFF);
+	
+		 HAL_UART_Transmit(&huart7, &adc_3_H,sizeof(adc_1_H),0xFFFF);
+		 HAL_UART_Transmit(&huart7, &adc_3_L,sizeof(adc_1_H),0xFFFF);
+	
+		 HAL_UART_Transmit(&huart7, &adc_4_H,sizeof(adc_1_H),0xFFFF);
+		 HAL_UART_Transmit(&huart7, &adc_4_L,sizeof(adc_1_H),0xFFFF);
+	
+     //发送校验 0xAA55
+		 HAL_UART_Transmit(&huart7, &verify_temp[1],sizeof(adc_1_H),0xFFFF);
+		 HAL_UART_Transmit(&huart7, &verify_temp[0],sizeof(adc_1_H),0xFFFF);
+	
+	   *recstring0=0;
+
+}
+
 u8 res = 0;
-char *revbuf[8] = {0}; 
+char *revbuf[10] = {0}; 
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	u8 rec; 
@@ -101,7 +147,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		rec=*(huart->pRxBuffPtr-1);
 		if(rec!=0x0D && rec!=0x0A)
 		{
-			HAL_UART_Transmit(&huart7,&rec,1,0xFFFF);
+//			HAL_UART_Transmit(&huart7,&rec,1,0xFFFF);
 			receive[res]=rec;			
 			res++;			
 		}
@@ -113,16 +159,47 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			sb =	res+count;						
 			}
 		}	
-		if(sb==19)
+//			HAL_UART_Transmit(&huart7,&enter,1,0xFFFF);
+		if(sb==29)
 		{			
 			int i;
 			int num = 0;
 			split(receive,",",revbuf,&num);
-			onestep=atoi(revbuf[0]);
-							
-		//lr_output_message("%s\n",revbuf[i]);
-		//HAL_UART_Transmit(&huart7,(revbuf[i]),sizeof(revbuf[i]),1000);
-			res=0;				
+			
+			res=0;	
+//			for(i=0;i<num;i++)
+//			{
+//				HAL_UART_Transmit(&huart7,(revbuf[i]),strlen(revbuf[i]),0xFFFF);
+//				HAL_UART_Transmit(&huart7,&space,sizeof(space),0xFFFF);
+//			}
+			
+//			onestep=atoi(revbuf[0]);
+			
+//			if(strcmp(revbuf[0],"GetP")==0)
+//				sendP();
+//			else 
+//			{
+//			 receiveSetP=atoi(revbuf[0]);
+//			 receiveSetT=atoi(revbuf[1]);
+//			 receiveSetG=atoi(revbuf[2]);					
+//			}
+			
+//		lr_output_message("%s\n",revbuf[i]);
+
+// 顺序为：GetP,气压，周期，步态，行程，抬腿高度，转弯角度,运动标志；
+				recstring0=revbuf[0];
+			
+			if(strchr(revbuf[1],flag_b)==NULL)
+			{
+				receiveSetP=atoi(revbuf[1]);
+				receiveSetT=atoi(revbuf[2]);
+				receiveSetG=atoi(revbuf[3]); //步态设置 0为对角 1为三角
+				receiveSetL=atoi(revbuf[4]);
+				receiveSetH=atoi(revbuf[5]);
+				receiveSetW=atoi(revbuf[6]);
+				recMotion_flag=atoi(revbuf[7]);
+			}
+		
 		}											
 	}	
 }	

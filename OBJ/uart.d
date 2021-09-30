@@ -94,6 +94,7 @@
 ..\obj\uart.o: ..\HALLIB\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hcd.h
 ..\obj\uart.o: ..\CORE\core_cm7.h
 ..\obj\uart.o: ..\HARDWARE\TIMER\timer.h
+..\obj\uart.o: adc.h
 ..\obj\uart.o: gait.h
 ..\obj\uart.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 ..\obj\uart.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

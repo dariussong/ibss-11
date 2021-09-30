@@ -26,6 +26,7 @@ u8 canbuf1[8]={0};
 u8 canbuf2[8]={0};
 u8 canbuf3[4]={0};
 
+char gait_flag=0;
 
 void TIM7_Init(u16 arr,u16 psc)
 {  
@@ -110,24 +111,74 @@ void TIM2_IRQHandler(void)
 
 //定时器5中断服务函数调用
 float s=-0.8;
-float T=3;
+
+float T=0;
+
 float delta_t=0.02;
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if(htim==(&TIM5_Handler))
     {
-			Read_All_Ad();	
-			air_control_trot();
-//			air_control_tripod();
-//			movement_trot();	
-//			movement_tilt();
-//			movement_tripod();				
-			s=s+delta_t;
-		if(s>=T)
-		{
-			s=0;
-		}
+			
+			  Read_All_Ad();
+				s=s+delta_t;		
+			
+			//步态、周期、行程、转弯角度必须一个周期结束之后才可以进行设置	
+			if(s>T){			
+			   //设置步态标志 0和false为对角 1和true为三角
+				if(receiveSetG==0)
+					{
+						gait_flag=0;	
+					}	
+				else if(receiveSetG==1)		
+					{		
+					  gait_flag=1;
+					}						
+					//周期、行程、转弯角度设置
+					T=receiveSetT;
+					L_onestep=receiveSetL;
+					W_onestep=receiveSetW;				
+		      }
+			
+			//由运动标志决定机器人是否运动
+			if(recMotion_flag==1)
+			{
+		   //由步态标志运行相应函数
+			 if(gait_flag==1)	
+			 	 {
+						air_control_tripod();
+						movement_tripod();	
+				 }
+				 else if(gait_flag==0)	
+				 {
+					  air_control_trot();
+						movement_trot();				
+				 }
+			 }
+			else if(recMotion_flag==0)
+			 {
+//				InitRobotPosion();
+//				SV_Init();
+			 }
+				//周期、行程、转弯角度设置 
+				target_p=receiveSetP;
+				H_onestep=receiveSetH;
+				 
+			//发送气压值
+			if(strcmp(recstring0,"GetP")==0)
+			{
+				sendP();
+
+			}
+//			else 
+//			{
+//			 receiveSetP=atoi(revbuf[0]);
+//			 receiveSetT=atoi(revbuf[1]);
+//			 receiveSetG=atoi(revbuf[2]);					
+//			}			
+		
+			
 		}
 		if(htim==(&TIM2_Handler))
     {			

@@ -100,7 +100,7 @@ void pid_value_init(void)
   err = 0;
 	err_last = 0;
 	integral = 0;
-	target_p = 50;
+	target_p = 80;
 }
 
 void SV_ESTIMATE(void)
@@ -150,30 +150,24 @@ void air_control_trot(void)//rf rh lf lh
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);	//rh0		
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4,GPIO_PIN_SET);	//lf0		
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);	//lh0		
-			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);	//all0
-		sv_flag[1]=1;
-		SV_ESTIMATE();		
-		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
-//		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);	
-	
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);	//all0				
 	}
 	if(s>=0&&s<=T/8)
 	{
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);//保险
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);	
+	//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);	
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
 			sv_flag[1]=1;
 			SV_ESTIMATE();
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);//rf lh up
-//	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
 	}
 	if(3*s>T/16&&s<=5*T/16)
 	{
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
-//	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_SET);
 		sv_flag[0]=1;
 		SV_ESTIMATE();
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
@@ -185,7 +179,7 @@ void air_control_trot(void)//rf rh lf lh
 		sv_flag[1]=1;
 		SV_ESTIMATE();
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
-//	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4,GPIO_PIN_SET);
@@ -198,7 +192,7 @@ void air_control_trot(void)//rf rh lf lh
 		sv_flag[0]=1;
 		SV_ESTIMATE();
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);
-//	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
 	}
 	if(s>19*T/32&&s<=21*T/32)
@@ -222,10 +216,10 @@ void air_control_trot(void)//rf rh lf lh
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
-//	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);	
-		sv_flag[1]=1;
+		sv_flag[0]=1;
 		SV_ESTIMATE();
 	}
 }
@@ -235,9 +229,8 @@ void air_control_tripod(void)
 {
 	if(s<-0.2)
 		{
-		
-			sv_flag[1]=1;
 			SV_ESTIMATE();
+			sv_flag[1]=1;
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);	//rf0和别的是反的		
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);	//rh0		
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4,GPIO_PIN_RESET);	//lf0		
@@ -252,22 +245,21 @@ void air_control_tripod(void)
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);	//lh0		
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);	//all0				
 	}
-	if(s>=0&&s<=T/16)
+	if(s>-T/16&&s<=T/16)
 	{
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4,GPIO_PIN_SET);
 		sv_flag[2]=0;
-
-	}
-	if(s>3*T/32&&s<=4*T/32)
-	{
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
+		SV_ESTIMATE();
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
 	}
-	if(s>3*T/16&&s<=5*T/16)
+	if(s>T/16&&s<=3*T/32)
+	{
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
+	}
+	if(s>3*T/16&&s<=10*T/32)
 	{
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);
@@ -276,15 +268,17 @@ void air_control_tripod(void)
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
 	}
-	if(s>5*T/16&&s<=7*T/16)
+	if(s>10*T/32&&s<=6*T/16)
 	{
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
 		sv_flag[1]=0;
+		SV_ESTIMATE();
 	}
 	if(s>7*T/16&&s<=17*T/32)
 	{
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);
 		sv_flag[3]=1;
@@ -296,8 +290,10 @@ void air_control_tripod(void)
 	{
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_5,GPIO_PIN_SET);
-
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
 	sv_flag[3]=0;
+		SV_ESTIMATE();
 	}
 	if(s>11*T/16&&s<=25*T/32)
 	{
@@ -307,15 +303,15 @@ void air_control_tripod(void)
 		SV_ESTIMATE();
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);
 	}
 	if(s>25*T/32&&s<=13*T/16)
 	{
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_SET);
-
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
 			sv_flag[0]=0;
+		SV_ESTIMATE();
 	}
 	if(s>15*T/16&&s<=T)
 	{
@@ -325,7 +321,6 @@ void air_control_tripod(void)
 		SV_ESTIMATE();
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
-
 	}
 
 }

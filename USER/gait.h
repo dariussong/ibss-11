@@ -40,20 +40,15 @@ extern float B;
 extern float F1;
 extern float F2;
 extern float F3;
-extern float stime;
-extern float Time;
+
 extern float cx[4];
 extern float cy[4];
 extern float cz[4];
-void StartAngleInit1(void);
-void StartAngleInit2(void);
-void StartAngleInit3(void);
-void StartAngle_rectify(void);
+void StartAngleInit(void);                              
 void InitRobotPosion(void);                                
 void Angle(float,int8_t);//output angle
 void movement_trot(void);
 void movement_tripod(void);
-void movement_tripod_br(void);
 void movement_series(void);
 
 typedef struct Kinematics
