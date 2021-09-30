@@ -117,11 +117,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if(htim==(&TIM5_Handler))
     {
-			//Read_All_Ad();	
-			//air_control_trot();
-			//movement_trot();	
-			movement_tripod_br();				
+			Read_All_Ad();	
+			air_control_trot();
+//			air_control_tripod();
+//			movement_trot();	
+//			movement_tilt();
+//			movement_tripod();				
 			s=s+delta_t;
+		if(s>=T)
+		{
+			s=0;
+		}
 		}
 		if(htim==(&TIM2_Handler))
     {			

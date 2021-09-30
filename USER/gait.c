@@ -7,7 +7,7 @@
 #include <sys.h>
 #include "uart.h"
 #include "timer.h"
-const short L1=38;
+const short L1=38;//38
 const short L2=47;//47
 const short L3=32;//22
 #define DE 1
@@ -21,18 +21,18 @@ float F3=32;
 float x[4]={0};
 float y[4]={0};
 float z[4]={0};
-float x_b=63;//62
-float y_b=30.24;
+float x_b=62;//62
+float y_b=31;//30.24
 float D;
 float B;	
 
 float D_onestep;
-float L_onestep=15;
+float L_onestep=25;
 float W_onestep=0;
 float delta=0;
-float H_onestep =15;
+float H_onestep =25;
 float stime=0;
-float Time=8;
+float Time=4;
 float cx[4]={0};
 float cy[4]={0};
 float cz[4]={0};
@@ -205,10 +205,6 @@ void movement_trot(void)
 				Angle(theta[3][0]+KMGecko.StartAngle[RH_J3],RH_J3);
 				Angle(theta[3][1]+KMGecko.StartAngle[RH_J2],RH_J2);
 				Angle(a[3][2]+KMGecko.StartAngle[RH_J1],RH_J1);		
-		if(s>=T)
-		{
-			s=0;
-		}
 		
 }
 void movement_tripod(void)
@@ -381,11 +377,8 @@ void movement_tripod(void)
 				Angle(theta[3][0]+KMGecko.StartAngle[RH_J3],RH_J3);
 				Angle(theta[3][1]+KMGecko.StartAngle[RH_J2],RH_J2);
 				Angle(a[3][2]+KMGecko.StartAngle[RH_J1],RH_J1);		
-		if(s>=T)
-		{
-			s=0;
-		}
-		
+	
+	
 }
 void movement_tripod_br(void)
 {
@@ -575,6 +568,7 @@ void movement_tripod_br(void)
 			a[3][1] = asin((y[3] * y[3] + x[3] * x[3] + z[3] * z[3] + L1 * L1 - L2 * L2 - L3 * L3) / ( 2 * L1 * sqrt (y[3] * y[3] +  x[3] * x[3] + z[3] * z[3] - L3 * L3)) )
 											- atan2(sqrt(y[3] * y[3] + z[3] * z[3] - L3 * L3) , -x[3]);
 			a[3][2] = asin((L1 * L1 + L2 * L2 + L3 * L3 - y[3] * y[3] - x[3] * x[3] - z[3] * z[3]) / (2 * L1 * L2));
+
 				theta[0][0]=(a[0][0]+a[0][1]);
 				theta[0][1]=(a[0][1]-a[0][0]);
 				
@@ -634,10 +628,7 @@ void movement_tripod_br(void)
 				Angle(theta[3][0]+KMGecko.StartAngle[RH_J3],RH_J3);
 				Angle(theta[3][1]+KMGecko.StartAngle[RH_J2],RH_J2);
 				Angle(a[3][2]+KMGecko.StartAngle[RH_J1],RH_J1);		
-		if(s>=T)
-		{
-			s=0;
-		}
+
 		
 
 
@@ -734,9 +725,6 @@ float a[4][3] = {0};     //   a1 = a[0]   a2=a[LF]
 			x[3]=-D*cos(alpha+delta)+B*cos(belta+delta/4*s/T*4)+L_onestep-L_onestep*4*s/T/4;
 			y[3]=-D*sin(alpha+delta)+B*sin(belta+delta/4*s/T*4)+W_onestep-W_onestep*4*s/T/4;
 			z[3]=-L3;
-			
-
-
 		}
 //	if(s<3*T/2/4&&s>=0)
 //	{	
@@ -898,109 +886,13 @@ float a[4][3] = {0};     //   a1 = a[0]   a2=a[LF]
 				Angle(a[3][0]+KMGecko.StartAngle[RH_J3],RH_J3);
 				Angle(a[3][1]+KMGecko.StartAngle[RH_J2],RH_J2);
 				Angle(a[3][2]+KMGecko.StartAngle[RH_J1],RH_J1);		
-		if(s>=T)
-		{
-			s=0;
-		}
 		
-
-
-
-
 }
-void StartAngleInit1(void)//darius's robot
+void StartAngle_rectify(void)//darius's robot
 {
-/**version1**/
-	//关节1、2、3分别为踝关节、膝关节、髋关节
-	//number 3
-//	KMGecko.StartAngle[RF_J3] = -3; //52
-//	KMGecko.StartAngle[RF_J2] = -6; //26//large figure turning to the inside
-//	KMGecko.StartAngle[RF_J1] = 7; //// large figure turning to the inside
-//   //number 2
-//	KMGecko.StartAngle[RH_J3] = 5;//-10//-25;	
-//	KMGecko.StartAngle[RH_J2] = -3;//50;	small figure clockwise
-//	KMGecko.StartAngle[RH_J1] = -5;//30;small figure turning to the clw
-//  //number 0
-//	KMGecko.StartAngle[LF_J3] = 0;//-10
-//	KMGecko.StartAngle[LF_J2] = 0;//-13 small figure turning to the inside
-//	KMGecko.StartAngle[LF_J1] = -2;//-58 small figure turning to the inside
-//	//number 1
-//	KMGecko.StartAngle[LH_J3] = 2;//10///-30;//原值为-30
-//	KMGecko.StartAngle[LH_J2] = 2;//0 large figure turning to the inside
-//	KMGecko.StartAngle[LH_J1] = 0;//;small figure turning to the inside
-	
-	/*second*/
-//	KMGecko.StartAngle[RF_J3] = 45-10; //52
-//	KMGecko.StartAngle[RF_J2] = -45+10; //26//large figure turning to the inside
-//	KMGecko.StartAngle[RF_J1] = 0; //// large figure turning to the inside
-//   //number 2
-//	KMGecko.StartAngle[RH_J3] = -45+12;	//-10//-25;	
-//	KMGecko.StartAngle[RH_J2] = 45-12;	//50;	small figure clockwise
-//	KMGecko.StartAngle[RH_J1] = 0 ;//30;small figure turning to the clw
-//  //number 0
-//	KMGecko.StartAngle[LF_J3] = -45+14;	//-10
-//	KMGecko.StartAngle[LF_J2] = 45-14;	//-13 small figure turning to the inside
-//	KMGecko.StartAngle[LF_J1] = 0;	//-58 small figure turning to the inside
-//	//number 1
-//	KMGecko.StartAngle[LH_J3] = 45-16;//10///-30;//原值为-30
-//	KMGecko.StartAngle[LH_J2] = -45+16;//0 large figure turning to the inside
-//	KMGecko.StartAngle[LH_J1] = 0;//;small figure turning to the inside		
-
-		/*third*/
-/*second hold*/
-	KMGecko.StartAngle[RF_J3] = 45-100; //52
-	KMGecko.StartAngle[RF_J2] = -45+88; //26//large figure turning to the inside
-	KMGecko.StartAngle[RF_J1] = 20; //// large figure turning to the inside
-   //number 2
-	KMGecko.StartAngle[RH_J3] = -45+95;	//-10//-25;	
-	KMGecko.StartAngle[RH_J2] = 45-95;	//50;	small figure clockwise
-	KMGecko.StartAngle[RH_J1] = -30 ;//30;small figure turning to the clw
-  //number 0
-	KMGecko.StartAngle[LF_J3] = -45+90;	//-10
-	KMGecko.StartAngle[LF_J2] = 45-90;	//-13 small figure turning to the inside
-	KMGecko.StartAngle[LF_J1] = -35;	//-58 small figure turning to the inside
-	//number 1
-	KMGecko.StartAngle[LH_J3] = 45-98;//10///-30;//原值为-30
-	KMGecko.StartAngle[LH_J2] = -45+107;//0 large figure turning to the inside
-	KMGecko.StartAngle[LH_J1] = 30;//;small figure turning to the inside		
-/*third hold*/
-//	KMGecko.StartAngle[RF_J3] = 45-10-82; //52
-//	KMGecko.StartAngle[RF_J2] = -45+10+82; //26//large figure turning to the inside
-//	KMGecko.StartAngle[RF_J1] = 30; //// large figure turning to the inside
-//   //number 2
-//	KMGecko.StartAngle[RH_J3] = -45+16+85;	//-10//-25;	
-//	KMGecko.StartAngle[RH_J2] = 45-16-80;	//50;	small figure clockwise
-//	KMGecko.StartAngle[RH_J1] = -40 ;//30;small figure turning to the clw
-//  //number 0
-//	KMGecko.StartAngle[LF_J3] = -45+11+82;//-10
-//	KMGecko.StartAngle[LF_J2] = 45-6-82;	//-13 small figure turning to the inside
-//	KMGecko.StartAngle[LF_J1] = -30;	//-58 small figure turning to the inside
-//	//number 1
-//	KMGecko.StartAngle[LH_J3] = 45-10-85;//10///-30;//原值为-30
-//	KMGecko.StartAngle[LH_J2] = -45+10+82;//0 large figure turning to the inside
-//	KMGecko.StartAngle[LH_J1] = 35;//;small figure turning to the inside	
-
-	
-	/*航天三院*/
-//	KMGecko.StartAngle[RF_J3] = 0; //52
-//	KMGecko.StartAngle[RF_J2] = -30; //26//large figure turning to the inside
-//	KMGecko.StartAngle[RF_J1] = -45; //// large figure turning to the inside
-//   //number 2
-//	KMGecko.StartAngle[RH_J3] = 0;//-10//-25;	
-//	KMGecko.StartAngle[RH_J2] = 30;//50;	small figure clockwise
-//	KMGecko.StartAngle[RH_J1] = 45;//30;small figure turning to the clw
-//  //number 0
-//	KMGecko.StartAngle[LF_J3] = 0;//-10
-//	KMGecko.StartAngle[LF_J2] = 30;//-13 small figure turning to the inside
-//	KMGecko.StartAngle[LF_J1] = 48;//-58 small figure turning to the inside
-//	//number 1
-//	KMGecko.StartAngle[LH_J3] = 0;//10///-30;//原值为-30
-//	KMGecko.StartAngle[LH_J2] = -30;//0 large figure turning to the inside
-//	KMGecko.StartAngle[LH_J1] = -45;//;small figure turning to the inside
-}
-void StartAngleInit2(void)//darius's robot
-{
-	
+	float L_onestep_R = 20;
+	float H_onestep_R = 20;
+	float W_onestep_R = 5;
 	float a[4][3] = {0};     //   a1 = a[0]   a2=a[LF]
 	float theta[4][2] = {0};
 	delta=delta*3.1415/180;
@@ -1010,51 +902,49 @@ void StartAngleInit2(void)//darius's robot
 	B = sqrt(x_b*x_b+y_b*y_b);
 	alpha = acos((x_b+F2)/D);
 	belta = acos(x_b/B);
-	float L_onestep1=1*L_onestep;
-
+	
 	for(stime=0 ; stime<Time ; stime=stime+0.02)
 	{
 	if(stime<Time/2&&stime>=0)
 	{	
-			x[0]=D*cos(alpha+delta*stime/Time*2)-B*cos(belta+delta*stime/Time*2)+L_onestep*2*stime/Time;
-			y[0]=D*sin(alpha+delta*stime/Time*2)-B*sin(belta+delta*stime/Time*2)+W_onestep*2*stime/Time;
-			z[0]=-L3+H_onestep-H_onestep*(sqrt(L_onestep*L_onestep+W_onestep*W_onestep)*4*stime/Time/2-sqrt(L_onestep*L_onestep+W_onestep*W_onestep)/2)*
-			(sqrt(L_onestep*L_onestep+W_onestep*W_onestep)*4*stime/Time/2- sqrt(L_onestep*L_onestep+W_onestep*W_onestep)/2)/((L_onestep1*L_onestep+W_onestep*W_onestep)/4);
+			x[0]=D*cos(alpha+delta*stime/Time*2)-B*cos(belta+delta*stime/Time*2)+L_onestep_R*2*stime/Time;
+			y[0]=D*sin(alpha+delta*stime/Time*2)-B*sin(belta+delta*stime/Time*2)+W_onestep_R*2*stime/Time;
+			z[0]=-L3+H_onestep_R-H_onestep_R*(sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)*4*stime/Time/2-sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/2)*
+			(sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)*4*stime/Time/2- sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/2)/((L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/4);
 		
-			x[1]=D*cos(alpha-delta*stime/Time*2)-B*cos(belta-delta*stime/Time*2)+L_onestep*stime/Time*2;
-			y[1]=-D*sin(alpha-delta*stime/Time*2)+B*sin(belta-delta*stime/Time*2)+W_onestep*2*stime/Time;
-//		z[1]=-L3+H_onestep-H_onestep*(sqrt(L_onestep*L_onestep+W_onestep*W_onestep)*4*s/T*3/4*7/8- sqrt(L_onestep*L_onestep+W_onestep*W_onestep)/8*3*7/8)*
-//		(sqrt(L_onestep*L_onestep+W_onestep*W_onestep)*4*s/T*3/4*7/8- sqrt(L_onestep*L_onestep+W_onestep*W_onestep)/8*3*7/8)/((L_onestep*L_onestep+W_onestep*W_onestep)/8/8*3*3);
-			z[1]=-L3+H_onestep-H_onestep*(sqrt(L_onestep*L_onestep+W_onestep*W_onestep)*4*stime/T/2- sqrt(L_onestep*L_onestep+W_onestep*W_onestep)/2)*
-			(sqrt(L_onestep*L_onestep+W_onestep*W_onestep)*4*stime/T/2- sqrt(L_onestep*L_onestep+W_onestep*W_onestep)/2)/((L_onestep*L_onestep+W_onestep*W_onestep)/4);
+			x[1]=D*cos(alpha-delta*stime/Time*2)-B*cos(belta-delta*stime/Time*2)+L_onestep_R*stime/Time*2;
+			y[1]=-D*sin(alpha-delta*stime/Time*2)+B*sin(belta-delta*stime/Time*2)+W_onestep_R*2*stime/Time;
+//		z[1]=-L3+H_onestep_R-H_onestep_R*(sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)*4*s/T*3/4*7/8- sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/8*3*7/8)*
+//		(sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)*4*s/T*3/4*7/8- sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/8*3*7/8)/((L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/8/8*3*3);
+			z[1]=-L3+H_onestep_R-H_onestep_R*(sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)*4*stime/Time/2- sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/2)*
+			(sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)*4*stime/Time/2- sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/2)/((L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/4);
+				
+			x[2]=-D*cos(alpha+delta*stime/Time*2)+B*cos(belta-delta*stime/Time*2)+L_onestep_R*4*stime/Time/2;
+			y[2]=D*sin(alpha+delta*s/Time*2)-B*sin(belta-delta*stime/Time*2)+W_onestep_R*2*stime/Time;
+			z[2]=-L3+H_onestep_R-H_onestep_R*(sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)*4*stime/Time/2-sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/2)*
+			(sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)*4*stime/Time/2- sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/2)/((L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/4);
 		
-		
-			x[2]=-D*cos(alpha+delta*stime/Time*2)+B*cos(belta-delta*stime/Time*2)+L_onestep*4*stime/Time/2;
-			y[2]=D*sin(alpha+delta*s/Time*2)-B*sin(belta-delta*stime/Time*2)+W_onestep*2*stime/Time;
-			z[2]=-L3+H_onestep-H_onestep*(sqrt(L_onestep*L_onestep+W_onestep*W_onestep)*4*stime/Time/2-sqrt(L_onestep*L_onestep+W_onestep*W_onestep)/2)*
-			(sqrt(L_onestep*L_onestep+W_onestep*W_onestep)*4*stime/Time/2- sqrt(L_onestep*L_onestep+W_onestep*W_onestep)/2)/((L_onestep*L_onestep+W_onestep*W_onestep)/4);
-		
-			x[3]=-D*cos(alpha+delta*stime/Time*2)+B*cos(belta+delta*stime/Time*2)+L_onestep*stime/Time*2;
-			y[3]=-D*sin(alpha+delta*stime/Time*2)+B*sin(belta+delta*stime/Time*2)+W_onestep*stime/Time*2;
-			z[3]=-L3+H_onestep-H_onestep*(sqrt(L_onestep*L_onestep+W_onestep*W_onestep)*stime/Time*2-sqrt(L_onestep*L_onestep+W_onestep*W_onestep)/2)*
-			(sqrt(L_onestep*L_onestep+W_onestep*W_onestep)*stime/Time*2- sqrt(L_onestep*L_onestep+W_onestep*W_onestep)/2)/((L_onestep*L_onestep+W_onestep*W_onestep)/4);
+			x[3]=-D*cos(alpha+delta*stime/Time*2)+B*cos(belta+delta*stime/Time*2)+L_onestep_R*stime/Time*2;
+			y[3]=-D*sin(alpha+delta*stime/Time*2)+B*sin(belta+delta*stime/Time*2)+W_onestep_R*stime/Time*2;
+			z[3]=-L3+H_onestep_R-H_onestep_R*(sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)*stime/Time*2-sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/2)*
+			(sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)*stime/Time*2- sqrt(L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/2)/((L_onestep_R*L_onestep_R+W_onestep_R*W_onestep_R)/4);
 		}
-		if(stime>=T/2&&stime<T)
+		if(stime>=Time/2&&stime<Time)
 		{	
-			x[0]=D*cos(alpha+delta)-B*cos(belta+delta*(stime-Time/2)/Time*2)+L_onestep-L_onestep*(stime-Time/2)/Time*2;
-			y[0]=D*sin(alpha+delta)-B*sin(belta+delta*(stime-Time/2)/Time*2)+W_onestep-W_onestep*(stime-Time/2)/Time*2;
+			x[0]=D*cos(alpha+delta)-B*cos(belta+delta*(stime-Time/2)/Time*2)+L_onestep_R-L_onestep_R*(stime-Time/2)/Time*2;
+			y[0]=D*sin(alpha+delta)-B*sin(belta+delta*(stime-Time/2)/Time*2)+W_onestep_R-W_onestep_R*(stime-Time/2)/Time*2;
 			z[0]=-L3;
 		
-			x[1]=D*cos(alpha-delta)-B*cos(belta-delta*(stime-Time/2)/Time*2)+L_onestep-L_onestep*(stime-Time/2)/Time*2;
-			y[1]=-D*sin(alpha-delta)+B*sin(belta-delta*(stime-Time/2)/Time*2)+W_onestep-W_onestep*(stime-Time/2)/Time*2;
+			x[1]=D*cos(alpha-delta)-B*cos(belta-delta*(stime-Time/2)/Time*2)+L_onestep_R-L_onestep_R*(stime-Time/2)/Time*2;
+			y[1]=-D*sin(alpha-delta)+B*sin(belta-delta*(stime-Time/2)/Time*2)+W_onestep_R-W_onestep_R*(stime-Time/2)/Time*2;
 			z[1]=-L3;
 	
-			x[2]=-D*cos(alpha-delta)+B*cos(belta-delta*(stime-Time/2)/Time*2)+L_onestep-L_onestep*(stime-Time/2)/Time*2;
-			y[2]=D*sin(alpha-delta)-B*sin(belta-delta*(stime-Time/2)/Time*2)+W_onestep-W_onestep*(stime-Time/2)/Time*2;
+			x[2]=-D*cos(alpha-delta)+B*cos(belta-delta*(stime-Time/2)/Time*2)+L_onestep_R-L_onestep_R*(stime-Time/2)/Time*2;
+			y[2]=D*sin(alpha-delta)-B*sin(belta-delta*(stime-Time/2)/Time*2)+W_onestep_R-W_onestep_R*(stime-Time/2)/Time*2;
 			z[2]=-L3;
 			
-			x[3]=-D*cos(alpha+delta)+B*cos(belta+delta*(stime-Time/2)/Time*2)+L_onestep-L_onestep*(stime-Time/2)/Time*2;
-			y[3]=-D*sin(alpha+delta)+B*sin(belta+delta*(stime-Time/2)/Time*2)+W_onestep-W_onestep*(stime-Time/2)/Time*2;
+			x[3]=-D*cos(alpha+delta)+B*cos(belta+delta*(stime-Time/2)/Time*2)+L_onestep_R-L_onestep_R*(stime-Time/2)/Time*2;
+			y[3]=-D*sin(alpha+delta)+B*sin(belta+delta*(stime-Time/2)/Time*2)+W_onestep_R-W_onestep_R*(stime-Time/2)/Time*2;
 			z[3]=-L3;			
 		}
 			a[0][0] = -asin(L3 / sqrt(z[0] * z[0] + y[0] * y[0]) ) - atan2(z[0],y[0]);
@@ -1139,59 +1029,149 @@ void StartAngleInit2(void)//darius's robot
 		HAL_Delay(20);
 	}	
 }
+void StartAngleInit1(void)//darius's robot
+{
+/**version1**/
+	//关节1、2、3分别为踝关节、膝关节、髋关节
+	//number 3
+//	KMGecko.StartAngle[RF_J3] = -3; //52
+//	KMGecko.StartAngle[RF_J2] = -6; //26//large figure turning to the inside
+//	KMGecko.StartAngle[RF_J1] = 7; //// large figure turning to the inside
+//   //number 2
+//	KMGecko.StartAngle[RH_J3] = 5;//-10//-25;	
+//	KMGecko.StartAngle[RH_J2] = -3;//50;	small figure clockwise
+//	KMGecko.StartAngle[RH_J1] = -5;//30;small figure turning to the clw
+//  //number 0
+//	KMGecko.StartAngle[LF_J3] = 0;//-10
+//	KMGecko.StartAngle[LF_J2] = 0;//-13 small figure turning to the inside
+//	KMGecko.StartAngle[LF_J1] = -2;//-58 small figure turning to the inside
+//	//number 1
+//	KMGecko.StartAngle[LH_J3] = 2;//10///-30;//原值为-30
+//	KMGecko.StartAngle[LH_J2] = 2;//0 large figure turning to the inside
+//	KMGecko.StartAngle[LH_J1] = 0;//;small figure turning to the inside
+	
+	/*second*/
+	KMGecko.StartAngle[RF_J3] = 30-5; //52
+	KMGecko.StartAngle[RF_J2] = -30-5; //26//large figure turning to the inside
+	KMGecko.StartAngle[RF_J1] = -5; //// large figure turning to the inside
+   //number 2
+	KMGecko.StartAngle[RH_J3] = -30+2;	//-10//-25;	
+	KMGecko.StartAngle[RH_J2] = 30-2;	//50;	small figure clockwise
+	KMGecko.StartAngle[RH_J1] = 0 ;//30;small figure turning to the clw
+  //number 0
+	KMGecko.StartAngle[LF_J3] = -30-5;	//-10
+	KMGecko.StartAngle[LF_J2] = 30+5;	//-13 small figure turning to the inside
+	KMGecko.StartAngle[LF_J1] = 0;	//-58 small figure turning to the inside
+	//number 1
+	KMGecko.StartAngle[LH_J3] = 30+6;//10///-30;//原值为-30
+	KMGecko.StartAngle[LH_J2] = -30+6;///0 large figure turning to the inside
+	KMGecko.StartAngle[LH_J1] = -3;//;small figure turning to the inside		
+/*second*/
+//	KMGecko.StartAngle[RF_J3] = 45; //52
+//	KMGecko.StartAngle[RF_J2] = -45; //26//large figure turning to the inside
+//	KMGecko.StartAngle[RF_J1] = 5; //// large figure turning to the inside
+//   //number 2
+//	KMGecko.StartAngle[RH_J3] = -45;	//-10//-25;	
+//	KMGecko.StartAngle[RH_J2] = 45;	//50;	small figure clockwise
+//	KMGecko.StartAngle[RH_J1] = 0 ;//30;small figure turning to the clw
+//  //number 0
+//	KMGecko.StartAngle[LF_J3] = -45;	//-10
+//	KMGecko.StartAngle[LF_J2] = 45;	//-13 small figure turning to the inside
+//	KMGecko.StartAngle[LF_J1] = 0;	//-58 small figure turning to the inside
+//	//number 1
+//	KMGecko.StartAngle[LH_J3] = 45;//10///-30;//原值为-30
+//	KMGecko.StartAngle[LH_J2] = -45;///0 large figure turning to the inside
+//	KMGecko.StartAngle[LH_J1] = 0;//;small figure turning to the inside		
+		/*third*/
+/*second hold*/
+//	KMGecko.StartAngle[RF_J3] = 45-102; //52
+//	KMGecko.StartAngle[RF_J2] = -45+91; //26//large figure turning to the inside
+//	KMGecko.StartAngle[RF_J1] = 10; //// large figure turning to the inside
+//   //number 2
+//	KMGecko.StartAngle[RH_J3] = -45+88;	//-10//-25;	
+//	KMGecko.StartAngle[RH_J2] = 45-103;	//50;	small figure clockwise
+//	KMGecko.StartAngle[RH_J1] = -20 ;//30;small figure turning to the clw
+//  //number 0
+//	KMGecko.StartAngle[LF_J3] = -45+92;	//-10
+//	KMGecko.StartAngle[LF_J2] = 45-92;	//-13 small figure turning to the inside
+//	KMGecko.StartAngle[LF_J1] = -25;	//-58 small figure turning to the inside
+//	//number 1
+//	KMGecko.StartAngle[LH_J3] = 45-95 ;//10///-30;//原值为-30
+//	KMGecko.StartAngle[LH_J2] = -45+90;//0 large figure turning to the inside
+//	KMGecko.StartAngle[LH_J1] = 15;//;small figure turning to the inside		
+/*third hold*/
+//	KMGecko.StartAngle[RF_J3] = 45-10-82; //52
+//	KMGecko.StartAngle[RF_J2] = -45+10+82; //26//large figure turning to the inside
+//	KMGecko.StartAngle[RF_J1] = 30; //// large figure turning to the inside
+//   //number 2
+//	KMGecko.StartAngle[RH_J3] = -45+16+85;	//-10//-25;	
+//	KMGecko.StartAngle[RH_J2] = 45-16-80;	//50;	small figure clockwise
+//	KMGecko.StartAngle[RH_J1] = -40 ;//30;small figure turning to the clw
+//  //number 0
+//	KMGecko.StartAngle[LF_J3] = -45+11+82;//-10
+//	KMGecko.StartAngle[LF_J2] = 45-6-82;	//-13 small figure turning to the inside
+//	KMGecko.StartAngle[LF_J1] = -30;	//-58 small figure turning to the inside
+//	//number 1
+//	KMGecko.StartAngle[LH_J3] = 45-10-85;//10///-30;//原值为-30
+//	KMGecko.StartAngle[LH_J2] = -45+10+82;//0 large figure turning to the inside
+//	KMGecko.StartAngle[LH_J1] = 35;//;small figure turning to the inside	
+
+	
+	/*航天三院*/
+//	KMGecko.StartAngle[RF_J3] = 0; //52
+//	KMGecko.StartAngle[RF_J2] = -33; //26//large figure turning to the inside
+//	KMGecko.StartAngle[RF_J1] = -50; //// large figure turning to the inside
+//   //number 2
+//	KMGecko.StartAngle[RH_J3] = 0;//-10//-25;	
+//	KMGecko.StartAngle[RH_J2] = 30;//50;	small figure clockwise
+//	KMGecko.StartAngle[RH_J1] = 45;//30;small figure turning to the clw
+//  //number 0
+//	KMGecko.StartAngle[LF_J3] = 0;//-10
+//	KMGecko.StartAngle[LF_J2] = 38;//-13 small figure turning to the inside
+//	KMGecko.StartAngle[LF_J1] = 60;//-58 small figure turning to the inside
+//	//number 1
+//	KMGecko.StartAngle[LH_J3] = 0;//10///-30;//原值为-30
+//	KMGecko.StartAngle[LH_J2] = -35;//0 large figure turning to the inside
+//	KMGecko.StartAngle[LH_J1] = -50;//;small figure turning to the inside
+}
+void StartAngleInit2(void)//darius's robot
+{
+/**version1**/
+	//关节1、2、3分别为踝关节、膝关节、髋关节
+	//number 3
+	KMGecko.StartAngle[RF_J3] = -3; //52
+	KMGecko.StartAngle[RF_J2] = -6; //26//large figure turning to the inside
+	KMGecko.StartAngle[RF_J1] = 7; //// large figure turning to the inside
+   //number 2
+	KMGecko.StartAngle[RH_J3] = 5;//-10//-25;	
+	KMGecko.StartAngle[RH_J2] = -3;//50;	small figure clockwise
+	KMGecko.StartAngle[RH_J1] = -5;//30;small figure turning to the clw
+  //number 0
+	KMGecko.StartAngle[LF_J3] = 0;//-10
+	KMGecko.StartAngle[LF_J2] = 0;//-13 small figure turning to the inside
+	KMGecko.StartAngle[LF_J1] = -2;//-58 small figure turning to the inside
+	//number 1
+	KMGecko.StartAngle[LH_J3] = 2;//10///-30;//原值为-30
+	KMGecko.StartAngle[LH_J2] = 2;//0 large figure turning to the inside
+	KMGecko.StartAngle[LH_J1] = 0;//;small figure turning to the inside
+}
 void StartAngleInit3(void)//darius's robot
 {
-	KMGecko.StartAngle[RF_J3] = 45-10-82+4; //52
-	KMGecko.StartAngle[RF_J2] = -45+10+82+4; //26//large figure turning to the inside
-	KMGecko.StartAngle[RF_J1] = 30-4; //// large figure turning to the inside
+	KMGecko.StartAngle[RF_J3] = 45-102; //52
+	KMGecko.StartAngle[RF_J2] = -45+95; //26//large figure turning to the inside
+	KMGecko.StartAngle[RF_J1] = 15; //// large figure turning to the inside
    //number 2
-	KMGecko.StartAngle[RH_J3] = -45+16+85+4;	//-10//-25;	
-	KMGecko.StartAngle[RH_J2] = 45-16-80+4;	//50;	small figure clockwise
-	KMGecko.StartAngle[RH_J1] = -40 ;//30;small figure turning to the clw
-  //number 0
-	KMGecko.StartAngle[LF_J3] = -45+11+82+4;//-10
-	KMGecko.StartAngle[LF_J2] = 45-6-82+4;	//-13 small figure turning to the inside
-	KMGecko.StartAngle[LF_J1] = -30;	//-58 small figure turning to the inside
-	//number 1
-	KMGecko.StartAngle[LH_J3] = 45-10-85+4;//10///-30;//原值为-30
-	KMGecko.StartAngle[LH_J2] = -45+10+82+4;//0 large figure turning to the inside
-	KMGecko.StartAngle[LH_J1] = 35;//;small figure turning to the inside	
-}
-void StartAngleInit4(void)//darius's robot
-{
-	KMGecko.StartAngle[RF_J3] = 45-10-82+4+5; //52
-	KMGecko.StartAngle[RF_J2] = -45+10+82+4-5; //26//large figure turning to the inside
-	KMGecko.StartAngle[RF_J1] = 30-4; //// large figure turning to the inside
-   //number 2
-	KMGecko.StartAngle[RH_J3] = -45+16+85+4;	//-10//-25;	
-	KMGecko.StartAngle[RH_J2] = 45-16-80+4;	//50;	small figure clockwise
-	KMGecko.StartAngle[RH_J1] = -40 ;//30;small figure turning to the clw
-  //number 0
-	KMGecko.StartAngle[LF_J3] = -45+11+82+4-5;//-10
-	KMGecko.StartAngle[LF_J2] = 45-6-82+4+5;	//-13 small figure turning to the inside
-	KMGecko.StartAngle[LF_J1] = -30;	//-58 small figure turning to the inside
-	//number 1
-	KMGecko.StartAngle[LH_J3] = 45-10-85+4;//10///-30;//原值为-30
-	KMGecko.StartAngle[LH_J2] = -45+10+82+4;//0 large figure turning to the inside
-	KMGecko.StartAngle[LH_J1] = 35;//;small figure turning to the inside	
-}
-void StartAngleInit5(void)//darius's robot
-{
-	KMGecko.StartAngle[RF_J3] = 45-10-82+4-5; //52
-	KMGecko.StartAngle[RF_J2] = -45+10+82+4+5; //26//large figure turning to the inside
-	KMGecko.StartAngle[RF_J1] = 30-4; //// large figure turning to the inside
-   //number 2
-	KMGecko.StartAngle[RH_J3] = -45+16+85+4;	//-10//-25;	
-	KMGecko.StartAngle[RH_J2] = 45-16-80+4;	//50;	small figure clockwise
+	KMGecko.StartAngle[RH_J3] = -45+88;	//-10//-25;	
+	KMGecko.StartAngle[RH_J2] = 45-103;	//50;	small figure clockwise
 	KMGecko.StartAngle[RH_J1] = -30 ;//30;small figure turning to the clw
   //number 0
-	KMGecko.StartAngle[LF_J3] = -45+11+82+4+5;//-10
-	KMGecko.StartAngle[LF_J2] = 45-6-82+4-5;	//-13 small figure turning to the inside
+	KMGecko.StartAngle[LF_J3] = -45+92;	//-10
+	KMGecko.StartAngle[LF_J2] = 45-92;	//-13 small figure turning to the inside
 	KMGecko.StartAngle[LF_J1] = -30;	//-58 small figure turning to the inside
 	//number 1
-	KMGecko.StartAngle[LH_J3] = 45-10-85+4;//10///-30;//原值为-30
-	KMGecko.StartAngle[LH_J2] = -45+10+82+4;//0 large figure turning to the inside
-	KMGecko.StartAngle[LH_J1] = 30;//;small figure turning to the inside	
+	KMGecko.StartAngle[LH_J3] = 45-95 ;//10///-30;//原值为-30
+	KMGecko.StartAngle[LH_J2] = -45+90;//0 large figure turning to the inside
+	KMGecko.StartAngle[LH_J1] = 25;//;small figure turning to the inside		
 }
 void InitRobotPosion(void)
 {

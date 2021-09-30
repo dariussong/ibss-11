@@ -12,7 +12,7 @@
 
 int main(void)
 {	
-	u8 len=0;		
+	u8 len=255;		
 	Cache_Enable();                		//打开L1-Cache	
 	HAL_Init();				        	//初始化HAL库
 	Stm32_Clock_Init(160,5,2,4);  	    //设置时钟,400Mhz 
@@ -36,19 +36,24 @@ int main(void)
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_12,GPIO_PIN_RESET);
 	StartAngleInit1();
 	InitRobotPosion();
-	HAL_Delay(500);
-	StartAngleInit2();
+	HAL_Delay(1000);
+//	StartAngleInit1();
+//	InitRobotPosion();
+//	HAL_Delay(500);
+//	StartAngle_rectify();
+//	StartAngleInit3();
+//	InitRobotPosion();
 	SV_test1();
-	HAL_Delay(200);
+	HAL_Delay(500);
 	SV_test2();
-//	TIM5_Init(10000-1,200-1);
-//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
-//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
+	TIM5_Init(10000-1,200-1);
+//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);
+//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_RESET);
 	while(1)
 	{	
 
 ////		HAL_UART_Transmit(&huart7,&c,sizeof(c),1000);
-//		TIM_SetCompare1(&TIM16_Handler,150);//1/8-1/125|5/200-25/200(1/40-1/8)
+//		TIM_SetCompare1(&TIM16_Handler,199);//1/8-1/125|5/200-25/200(1/40-1/8)
 ////		HAL_Delay(1000);
 //		TIM_SetCompare1(&TIM1_Handler,450);//1/8-1/125|5/200-25/200(1/40-1/8)
 //		HAL_Delay(300);
@@ -61,14 +66,16 @@ int main(void)
 //			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);	
 //			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
 //			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);	
-//			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_SET);			 
+//			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_SET);	
+
 //		 Read_All_Ad(); 
-//		 sv_flag[3]=1;
+//		 sv_flag[2]=1;
 //		 SV_ESTIMATE();
-//		 HAL_UART_Transmit(&huart7, &adc_1_H,sizeof(adc_1_H),0xFFFF);		
-//		 HAL_UART_Transmit(&huart7, &adc_1_L,sizeof(adc_1_H),0xFFFF);
-//		 HAL_UART_Transmit(&huart7, &len,1,0xFFFF);
-//		HAL_Delay(20);
+		 HAL_UART_Transmit(&huart7, &adc_3_H,sizeof(adc_1_H),0xFFFF);		
+		 HAL_UART_Transmit(&huart7, &adc_3_L,sizeof(adc_1_H),0xFFFF);
+		 HAL_UART_Transmit(&huart7, &len,1,0xFFFF);
+		HAL_Delay(20);
+
 //		 t+=1;
 //		 }
 //			 HAL_Delay(1000);

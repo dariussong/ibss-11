@@ -48,8 +48,7 @@ extern float cz[4];
 void StartAngleInit1(void);
 void StartAngleInit2(void);
 void StartAngleInit3(void);
-void StartAngleInit4(void);
-void StartAngleInit5(void);
+void StartAngle_rectify(void);
 void InitRobotPosion(void);                                
 void Angle(float,int8_t);//output angle
 void movement_trot(void);
